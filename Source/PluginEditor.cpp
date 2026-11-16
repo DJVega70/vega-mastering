@@ -160,8 +160,8 @@ MainPanel::MainPanel (VegaMasteringProcessor& p) : proc (p), state (p.apvts)
     {
         const float sc[] { 0.75f, 0.85f, 1.0f, 1.15f, 1.25f, 1.5f };
         proc.uiScale.store (sc[juce::jlimit (0, 5, zoomBox.getSelectedItemIndex())]);
-        if (onScaleChanged) juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<MainPanel> (this)]
-                                                              { if (sp && sp->onScaleChanged) sp->onScaleChanged(); });
+        juce::Component::SafePointer<MainPanel> sp (this);
+        juce::MessageManager::callAsync ([sp] { if (sp != nullptr && sp->onScaleChanged) sp->onScaleChanged(); });
     };
     for (auto* c : { &osBox, &targetBox, &zoomBox }) addAndMakeVisible (c);
 
