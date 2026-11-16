@@ -1,0 +1,62 @@
+name: Build Vega Mastering
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows VST3
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DVEGA_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release --target VegaMastering_VST3 VegaOfflineTest --parallel
+
+      - name: DSP self-test (true-peak limiter, NaN check)
+        run: build\VegaOfflineTest_artefacts\Release\VegaOfflineTest.exe
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: VegaMastering-Windows-VST3
+          path: build/VegaMastering_artefacts/Release/VST3/
+
+  macos:
+    name: macOS VST3 + AU (Universal)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DVEGA_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release --target VegaMastering_VST3 VegaMastering_AU VegaOfflineTest --parallel
+
+      - name: DSP self-test
+        run: ./build/VegaOfflineTest_artefacts/Release/VegaOfflineTest
+
+      - name: Ad-hoc sign
+        run: |
+          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/VST3/Vega Mastering.vst3"
+          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/AU/Vega Mastering.component"
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp -R "build/VegaMastering_artefacts/Release/VST3/Vega Mastering.vst3" dist/
+          cp -R "build/VegaMastering_artefacts/Release/AU/Vega Mastering.component" dist/
+          cd dist && zip -r -y ../VegaMastering-macOS.zip .
+
+      - name: Upload macOS plugins
+        uses: actions/upload-artifact@v4
+        with:
+          name: VegaMastering-macOS-VST3-AU
+          path: VegaMastering-macOS.zip
