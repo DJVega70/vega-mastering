@@ -1,0 +1,64 @@
+name: Vega Productions Suite bundle
+
+# Collects the latest release of every Vega Productions plugin into one zip per platform.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: [ '.github/workflows/suite-bundle.yml' ]
+  schedule:
+    - cron: '17 11 * * *'   # daily refresh (picks up new plugin builds)
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the latest release of each plugin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          mkdir -p win mac
+          for repo in vega-mastering StudioReverbDJV ConsoleChannelStrip VegaSynth vega-eq vega-multisynth vega-autotune vega-chords; do
+            echo "== $repo"
+            gh release download --repo "DJVega70/$repo" --pattern '*Windows-VST3.zip' --dir "dl-win-$repo" 2>/dev/null || { echo "  (no release yet)"; continue; }
+            gh release download --repo "DJVega70/$repo" --pattern '*macOS-VST3-AU.zip' --dir "dl-mac-$repo" 2>/dev/null || true
+            for z in dl-win-$repo/*.zip; do unzip -oq "$z" -d win; done
+            for z in dl-mac-$repo/*.zip; do [ -f "$z" ] && unzip -oq "$z" -d mac; done
+          done
+          ls -la win mac
+      - name: Build the bundles
+        run: |
+          cat > README.txt <<'TXT'
+          VEGA PRODUCTIONS SUITE
+
+          Windows (FL Studio):
+            Copy every ".vst3" folder from this zip into  C:\Program Files\Common Files\VST3\
+            Then in FL Studio: Options > Manage plugins > Find more plugins.
+            Everything appears under "Vega Productions".
+
+          Mac (Ableton Live / FL Studio):
+            .vst3      ->  ~/Library/Audio/Plug-Ins/VST3/
+            .component ->  ~/Library/Audio/Plug-Ins/Components/
+            Then run in Terminal (once):
+              xattr -cr ~/Library/Audio/Plug-Ins/VST3/Vega* ~/Library/Audio/Plug-Ins/Components/Vega*
+          TXT
+          cp README.txt win/ && cp README.txt mac/
+          (cd win && zip -r -y ../Vega-Productions-Suite-Windows.zip .)
+          (cd mac && zip -r -y ../Vega-Productions-Suite-macOS.zip .)
+          ls -la *.zip
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: suite
+          name: Vega Productions Suite (all plugins)
+          make_latest: false
+          body: |
+            Every Vega Productions plugin in one download (refreshed daily).
+            **Windows:** Vega-Productions-Suite-Windows.zip  -  **Mac:** Vega-Productions-Suite-macOS.zip
+            See README.txt inside for install steps.
+          files: |
+            Vega-Productions-Suite-Windows.zip
+            Vega-Productions-Suite-macOS.zip
