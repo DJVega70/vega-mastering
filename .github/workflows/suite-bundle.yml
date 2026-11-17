@@ -22,7 +22,7 @@ jobs:
         run: |
           set -e
           mkdir -p win mac
-          for repo in vega-mastering StudioReverbDJV ConsoleChannelStrip VegaSynth vega-eq vega-multisynth vega-autotune vega-chords vega-pump vega-delay vega-saturator vega-djfilter vega-transient vega-vocal vega-imager -vega-analyzer vega-drums vega-sampler; do
+          for repo in vega-mastering StudioReverbDJV ConsoleChannelStrip VegaSynth vega-eq vega-multisynth vega-autotune vega-chords vega-pump vega-delay vega-saturator vega-djfilter vega-transient vega-vocal vega-imager -vega-analyzer vega-drums vega-sampler vega-glitch vega-swing vega-harmonic; do
             echo "== $repo"
             gh release download --repo "DJVega70/$repo" --pattern '*Windows-VST3.zip' --dir "dl-win-$repo" 2>/dev/null || { echo "  (no release yet)"; continue; }
             gh release download --repo "DJVega70/$repo" --pattern '*macOS-VST3-AU.zip' --dir "dl-mac-$repo" 2>/dev/null || true
