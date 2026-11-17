@@ -44,15 +44,15 @@ User presets are saved to `Documents/Vega Productions/Mastering Presets`.
 
 ## Install
 
-**Windows (FL Studio):** unzip, then copy `Vega Mastering.vst3` to `C:\Program Files\Common Files\VST3\`. In FL Studio go to **Options → Manage plugins → Find more plugins**, then load **Vega Mastering** on the Master track.
+**Windows (FL Studio):** unzip, then copy `Vega Productions Mastering.vst3` to `C:\Program Files\Common Files\VST3\`. In FL Studio go to **Options → Manage plugins → Find more plugins**, then load **Vega Mastering** on the Master track.
 
 **Mac (Ableton Live 12 / FL Studio):** unzip, then copy
-- `Vega Mastering.vst3` → `~/Library/Audio/Plug-Ins/VST3/`
-- `Vega Mastering.component` → `~/Library/Audio/Plug-Ins/Components/`
+- `Vega Productions Mastering.vst3` → `~/Library/Audio/Plug-Ins/VST3/`
+- `Vega Productions Mastering.component` → `~/Library/Audio/Plug-Ins/Components/`
 
 The plugin is unsigned, so clear the download quarantine once in Terminal:
 ```
-xattr -cr ~/Library/Audio/Plug-Ins/VST3/"Vega Mastering.vst3" ~/Library/Audio/Plug-Ins/Components/"Vega Mastering.component"
+xattr -cr ~/Library/Audio/Plug-Ins/VST3/"Vega Productions Mastering.vst3" ~/Library/Audio/Plug-Ins/Components/"Vega Productions Mastering.component"
 ```
 Then rescan plugins in Ableton (**Settings → Plug-Ins → Rescan**).
 

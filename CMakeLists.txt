@@ -28,7 +28,7 @@ juce_add_plugin(VegaMastering
     PLUGIN_MANUFACTURER_CODE Vgap
     PLUGIN_CODE Vms1
     FORMATS ${VEGA_FORMATS}
-    PRODUCT_NAME "Vega Mastering"
+    PRODUCT_NAME "Vega Productions Mastering"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
     NEEDS_MIDI_OUTPUT FALSE

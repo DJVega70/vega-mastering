@@ -45,14 +45,14 @@ jobs:
 
       - name: Ad-hoc sign
         run: |
-          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/VST3/Vega Mastering.vst3"
-          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/AU/Vega Mastering.component"
+          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/VST3/Vega Productions Mastering.vst3"
+          codesign --force --deep -s - "build/VegaMastering_artefacts/Release/AU/Vega Productions Mastering.component"
 
       - name: Package
         run: |
           mkdir -p dist
-          cp -R "build/VegaMastering_artefacts/Release/VST3/Vega Mastering.vst3" dist/
-          cp -R "build/VegaMastering_artefacts/Release/AU/Vega Mastering.component" dist/
+          cp -R "build/VegaMastering_artefacts/Release/VST3/Vega Productions Mastering.vst3" dist/
+          cp -R "build/VegaMastering_artefacts/Release/AU/Vega Productions Mastering.component" dist/
           cd dist && zip -r -y ../VegaMastering-macOS.zip .
 
       - name: Upload macOS plugins
