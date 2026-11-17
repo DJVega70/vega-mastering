@@ -142,13 +142,13 @@ inline void designLinearPhaseFir (const std::function<double (double)>& magnitud
         data[(size_t) (2 * k)]     = (float) magnitudeAtHz ((double) k * fs / N);
         data[(size_t) (2 * k + 1)] = 0.0f;
     }
-    const float dc = data[0];
+    // Calibrate the inverse FFT's scaling with a flat (all‑ones) spectrum, whose ideal
+    // impulse peak is exactly 1. (Don't use H(0): it is 0 for low‑cut filters.)
+    std::vector<float> ref ((size_t) N * 2, 0.0f);
+    for (int k = 0; k <= N / 2; ++k) ref[(size_t) (2 * k)] = 1.0f;
+    fft.performRealOnlyInverseTransform (ref.data());
+    const float scale = std::abs (ref[0]) > 1.0e-12f ? 1.0f / ref[0] : 1.0f;
     fft.performRealOnlyInverseTransform (data.data());
-
-    // normalise so that sum(h) == H(0) regardless of the FFT backend's scaling
-    double sum = 0.0;
-    for (int n = 0; n < N; ++n) sum += data[(size_t) n];
-    const float scale = std::abs (sum) > 1.0e-12 ? (float) (dc / sum) : 1.0f;
 
     // rotate by N/2 -> causal, symmetric about N/2, then window (Blackman)
     for (int n = 0; n < N; ++n)
